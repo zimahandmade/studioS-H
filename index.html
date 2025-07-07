@@ -44,22 +44,19 @@
             padding: 10px;
         }
         #start-button {
-            padding: 15px 50px;
-            font-size: 20px;
+            padding: 12px 45px;
+            font-size: 18px;
             font-weight: bold;
             color: white;
-            background: linear-gradient(45deg, #FF4500, #FF8C00);
-            border: none;
+            background-color: transparent;
+            border: 2px solid white;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            animation: glow-pulse 2s infinite;
+            transition: background-color 0.3s, color 0.3s;
         }
-        @keyframes glow-pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        #start-button:hover {
+            background-color: white;
+            color: #333;
         }
         #ui-container {
             position: fixed;
