@@ -31,6 +31,8 @@
         #start-container {
             text-align: center;
             max-width: 90%;
+            /* این خط برای جابجایی دکمه به پایین اضافه شده است */
+            padding-top: 40vh; 
         }
         #start-container p {
             font-size: 24px;
@@ -116,13 +118,13 @@
             <button id="start-button">بزن بریم</button>
         </div>
     </div>
-    
+
     <div id="ui-container" class="hidden">
         <button id="toggle-view-button">پخش تمام صفحه</button>
     </div>
-    
+
     <div id="modal-player" class="hidden"></div>
-    
+
     <a-scene id="ar-scene" class="hidden" mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.001; filterBeta: 10;" vr-mode-ui="enabled: false" color-space="sRGB">
         <a-assets>
             <video id="ar-video" src="./video.mp4" loop playsinline webkit-playsinline></video>
@@ -170,21 +172,21 @@
 
             toggleViewButton.addEventListener('click', () => {
                 const currentTime = arVideo.currentTime;
-                
+
                 if (!isModalMode) {
                     arVideo.pause();
                     modalPlayer.classList.remove('hidden');
-                    
+
                     const modalVideo = document.createElement('video');
                     modalVideo.src = arVideo.src;
                     modalVideo.currentTime = currentTime;
                     modalVideo.controls = true;
                     modalVideo.loop = true;
                     modalVideo.autoplay = true;
-                    
+
                     modalPlayer.innerHTML = '';
                     modalPlayer.appendChild(modalVideo);
-                    
+
                     toggleViewButton.textContent = "پخش AR";
                     isModalMode = true;
                 } else {
@@ -194,11 +196,11 @@
                     }
                     modalPlayer.innerHTML = '';
                     modalPlayer.classList.add('hidden');
-                    
+
                     if (targetEntity.getAttribute('mindar-image-target').visible) {
                         arVideo.play();
                     }
-                    
+
                     toggleViewButton.textContent = "پخش تمام صفحه";
                     isModalMode = false;
                 }
