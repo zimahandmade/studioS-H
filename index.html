@@ -31,8 +31,6 @@
         #start-container {
             text-align: center;
             max-width: 90%;
-            /* این خط برای جابجایی دکمه به پایین اضافه شده است */
-            padding-top: 40vh; 
         }
         #start-container p {
             font-size: 24px;
@@ -115,23 +113,33 @@
 
     <div id="splash-screen">
         <div id="start-container">
+            <p>قاب عکستو جلو دوربین گوشی بگیر تا سوپرایزت کنم</p>
             <button id="start-button">بزن بریم</button>
         </div>
     </div>
-
+    
     <div id="ui-container" class="hidden">
         <button id="toggle-view-button">پخش تمام صفحه</button>
     </div>
-
+    
     <div id="modal-player" class="hidden"></div>
-
+    
     <a-scene id="ar-scene" class="hidden" mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.001; filterBeta: 10;" vr-mode-ui="enabled: false" color-space="sRGB">
         <a-assets>
             <video id="ar-video" src="./video.mp4" loop playsinline webkit-playsinline></video>
         </a-assets>
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
         <a-entity id="target-entity" mindar-image-target="targetIndex: 0">
-            <a-video id="ar-video-plane" src="#ar-video" width="1" height="1.25" rotation="0 0 0" position="0 0 0"></a-video>
+            <!--
+                *** این خط مهمترین تغییر است ***
+                برای اینکه ویدیو کاملاً هم اندازه قاب عکس شما باشد، باید نسبت ابعاد (طول به عرض) آن را اینجا تنظیم کنید.
+                یک خط کش بردارید و طول و عرض عکسی که به عنوان هدف استفاده کرده اید را اندازه بگیرید.
+                سپس ارتفاع را تقسیم بر عرض کنید.
+                مثال: اگر عکس شما 15 سانتی متر ارتفاع و 12 سانتی متر عرض دارد: 15 / 12 = 1.25
+                حالا عدد به دست آمده را در قسمت height="" قرار دهید.
+                width همیشه باید "1" باشد.
+            -->
+            <a-video id="ar-video-plane" src="#ar-video" width="1" height="0.8" rotation="0 0 0" position="0 0 0"></a-video>
         </a-entity>
     </a-scene>
 
@@ -172,21 +180,21 @@
 
             toggleViewButton.addEventListener('click', () => {
                 const currentTime = arVideo.currentTime;
-
+                
                 if (!isModalMode) {
                     arVideo.pause();
                     modalPlayer.classList.remove('hidden');
-
+                    
                     const modalVideo = document.createElement('video');
                     modalVideo.src = arVideo.src;
                     modalVideo.currentTime = currentTime;
                     modalVideo.controls = true;
                     modalVideo.loop = true;
                     modalVideo.autoplay = true;
-
+                    
                     modalPlayer.innerHTML = '';
                     modalPlayer.appendChild(modalVideo);
-
+                    
                     toggleViewButton.textContent = "پخش AR";
                     isModalMode = true;
                 } else {
@@ -196,11 +204,11 @@
                     }
                     modalPlayer.innerHTML = '';
                     modalPlayer.classList.add('hidden');
-
+                    
                     if (targetEntity.getAttribute('mindar-image-target').visible) {
                         arVideo.play();
                     }
-
+                    
                     toggleViewButton.textContent = "پخش تمام صفحه";
                     isModalMode = false;
                 }
