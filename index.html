@@ -31,24 +31,41 @@
         #start-container {
             text-align: center;
             max-width: 90%;
+            /* موقعیت دکمه به حالت صحیح بازگردانده شد */
+            transform: translateY(10vh); 
         }
+        
+        /* استایل دکمه به حالت مینیمال مشکی بازگردانده شد */
+        @keyframes pulse-effect {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+            }
+            70% {
+                transform: scale(1.02);
+                box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+            }
+        }
+
         #start-button {
-            padding: 15px 50px;
-            font-size: 20px;
+            padding: 12px 45px;
+            font-size: 18px;
             font-weight: bold;
-            color: white;
-            background: linear-gradient(45deg, #FF4500, #FF8C00);
-            border: none;
+            color: black;
+            background-color: transparent;
+            border: 2px solid black;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            animation: glow-pulse 2s infinite;
+            transition: background-color 0.3s, color 0.3s;
+            animation: pulse-effect 2s infinite;
         }
-        @keyframes glow-pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        #start-button:hover {
+            background-color: black;
+            color: white;
         }
         #ui-container {
             position: fixed;
@@ -115,13 +132,10 @@
     <div id="modal-player" class="hidden"></div>
     
     <!-- 
-        *** تنظیمات پیشرفته برای بهینه‌سازی و کاهش شدید لرزش ***
-        filterMinCF: حساسیت به تشخیص‌های جدید را کم می‌کند (کاهش لرزش).
-        filterBeta: سرعت فیلتر را بسیار کند می‌کند تا حرکات نرم‌تر شوند.
-        missTolerance: تعداد فریم‌هایی که تصویر می‌تواند دیده نشود تا ویدیو متوقف شود را افزایش می‌دهد.
-        warmupTolerance: تعداد فریم‌هایی که تصویر باید دیده شود تا ویدیو شروع شود را افزایش می‌دهد.
+        *** تنظیمات جدید برای کاهش لرزش ***
+        این مقادیر معمولاً پایداری خوبی را فراهم می‌کنند.
     -->
-    <a-scene id="ar-scene" class="hidden" mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.1; filterBeta: 10000; missTolerance: 20; warmupTolerance: 10;" vr-mode-ui="enabled: false" color-space="sRGB">
+    <a-scene id="ar-scene" class="hidden" mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.01; filterBeta: 30;" vr-mode-ui="enabled: false" color-space="sRGB">
         <a-assets>
             <video id="ar-video" src="./video.mp4" loop playsinline webkit-playsinline></video>
         </a-assets>
