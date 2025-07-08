@@ -132,10 +132,9 @@
     <div id="modal-player" class="hidden"></div>
     
     <!-- 
-        *** تنظیمات جدید برای کاهش لرزش ***
-        این مقادیر معمولاً پایداری خوبی را فراهم می‌کنند.
+        *** تنظیمات جدید و قوی‌تر برای به حداقل رساندن لرزش ***
     -->
-    <a-scene id="ar-scene" class="hidden" mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.01; filterBeta: 30;" vr-mode-ui="enabled: false" color-space="sRGB">
+    <a-scene id="ar-scene" class="hidden" mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.001; filterBeta: 1000;" vr-mode-ui="enabled: false" color-space="sRGB">
         <a-assets>
             <video id="ar-video" src="./video.mp4" loop playsinline webkit-playsinline></video>
         </a-assets>
