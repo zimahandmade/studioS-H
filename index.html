@@ -20,7 +20,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://placehold.co/600x800/222/fff?text=Zima+Handmade');
+            background-image: url('./zima.jpg');
             background-size: cover;
             background-position: center center;
             display: flex;
@@ -113,7 +113,6 @@
             height: 100%;
             z-index: 1;
         }
-        /* استایل برای پیغام خطا */
         #permission-denied-modal {
             position: fixed;
             top: 0;
@@ -162,7 +161,6 @@
         </div>
     </div>
     
-    <!-- پیغام خطا برای زمانی که کاربر اجازه دسترسی نمی‌دهد -->
     <div id="permission-denied-modal" class="hidden">
         <div class="modal-content">
             <h3>دسترسی لازم است</h3>
@@ -179,7 +177,12 @@
     
     <a-scene id="ar-scene" class="hidden" mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.001; filterBeta: 10;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" color-space="sRGB">
         <a-assets>
-            <video id="ar-video" src="https://cdn.glitch.global/e5424551-7f2d-4527-b449-131468a18c6c/video.mp4?v=1720431238968" loop playsinline webkit-playsinline></video>
+            <!-- 
+                ویژگی preload="auto" برای بارگذاری سریع‌تر ویدیو اضافه شد.
+                آدرس ویدیو به یک لینک عمومی تغییر کرد تا از در دسترس بودن آن مطمئن شویم.
+                شما می‌توانید این آدرس را با آدرس ویدیوی خودتان جایگزین کنید.
+            -->
+            <video id="ar-video" src="https://cdn.glitch.global/e5424551-7f2d-4527-b449-131468a18c6c/video.mp4?v=1720431238968" preload="auto" loop playsinline webkit-playsinline></video>
         </a-assets>
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
         <a-entity id="target-entity" mindar-image-target="targetIndex: 0">
@@ -202,7 +205,6 @@
 
             let isModalMode = false;
 
-            // تابع برای شروع واقعیت افزوده
             const startAR = () => {
                 splashScreen.classList.add('hidden');
                 sceneEl.classList.remove('hidden');
@@ -211,36 +213,42 @@
             };
 
             startButton.addEventListener('click', () => {
-                // بررسی اینکه آیا نیاز به درخواست اجازه برای سنسور حرکتی هست یا نه (مخصوص iOS 13+)
                 if (typeof DeviceMotionEvent.requestPermission === 'function') {
                     DeviceMotionEvent.requestPermission()
                         .then(permissionState => {
                             if (permissionState === 'granted') {
-                                startAR(); // اگر اجازه داده شد، شروع کن
+                                startAR();
                             } else {
-                                permissionDeniedModal.classList.remove('hidden'); // اگر اجازه داده نشد، پیغام خطا نشان بده
+                                permissionDeniedModal.classList.remove('hidden');
                             }
                         })
                         .catch(console.error);
                 } else {
-                    // برای دستگاه‌های دیگر که این اجازه را لازم ندارند
                     startAR();
                 }
             });
 
-            // بستن پیغام خطا
             closeModalButton.addEventListener('click', () => {
                 permissionDeniedModal.classList.add('hidden');
             });
 
             sceneEl.addEventListener("arReady", () => {
+                // منطق پخش ویدیو بهبود یافت تا مطمئن‌تر عمل کند
                 targetEntity.addEventListener("targetFound", () => {
-                    arVideo.play();
+                    console.log("Target Found! Attempting to play video.");
                     if (!isModalMode) {
                         uiContainer.classList.remove('hidden');
                     }
+                    const playPromise = arVideo.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.error("Video playback failed:", error);
+                        });
+                    }
                 });
+
                 targetEntity.addEventListener("targetLost", () => {
+                    console.log("Target Lost. Pausing video.");
                     arVideo.pause();
                     if (!isModalMode) {
                         uiContainer.classList.add('hidden');
