@@ -31,50 +31,24 @@
         #start-container {
             text-align: center;
             max-width: 90%;
-            /* این خط برای جابجایی دکمه به پایین و قرار گرفتن در محل مورد نظر اضافه شده است */
-            transform: translateY(10vh); 
         }
-        #start-container p {
-            font-size: 24px;
-            font-weight: bold;
-            line-height: 1.6;
-            color: #FFA500;
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);
-            margin: 0 0 30px 0;
-            padding: 10px;
-        }
-        
-        /* Keyframes for the blinking effect */
-        @keyframes pulse-effect {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
-            }
-            70% {
-                transform: scale(1.02);
-                box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
-            }
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-            }
-        }
-
         #start-button {
-            padding: 12px 45px;
-            font-size: 18px;
+            padding: 15px 50px;
+            font-size: 20px;
             font-weight: bold;
-            color: black;
-            background-color: transparent;
-            border: 2px solid black;
+            color: white;
+            background: linear-gradient(45deg, #FF4500, #FF8C00);
+            border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
-            animation: pulse-effect 2s infinite;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: glow-pulse 2s infinite;
         }
-        #start-button:hover {
-            background-color: black;
-            color: white;
+        @keyframes glow-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         #ui-container {
             position: fixed;
@@ -124,6 +98,53 @@
             height: 100%;
             z-index: 1;
         }
+
+        /* استایل‌های جدید برای پنجره مجوز سنسور */
+        #mindar-ui-overlay.mindar-ui-overlay .mindar-ui-prompt {
+            background: rgba(240, 240, 245, 0.85) !important;
+            border: none !important;
+            border-radius: 14px !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            color: black !important;
+        }
+
+        #mindar-ui-overlay.mindar-ui-overlay .mindar-ui-prompt-message {
+            color: black !important;
+            font-weight: bold !important;
+            padding-bottom: 15px !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        #mindar-ui-overlay.mindar-ui-overlay .mindar-ui-prompt-button-container {
+            display: flex !important;
+            width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        #mindar-ui-overlay.mindar-ui-overlay .mindar-ui-prompt-button {
+            background: transparent !important;
+            border: none !important;
+            color: #007AFF !important;
+            font-size: 17px !important;
+            font-weight: normal !important;
+            border-radius: 0 !important;
+            flex-grow: 1 !important;
+            padding: 12px 0 !important;
+            margin: 0 !important;
+        }
+
+        #mindar-ui-overlay.mindar-ui-overlay .mindar-ui-prompt-button:first-child {
+            border-right: 1px solid rgba(0, 0, 0, 0.2) !important;
+            font-weight: bold !important;
+        }
+
+        #mindar-ui-overlay.mindar-ui-overlay .mindar-ui-prompt-button:active {
+            background-color: rgba(0, 0, 0, 0.1) !important;
+        }
+
     </style>
 </head>
 <body>
@@ -142,19 +163,10 @@
     
     <a-scene id="ar-scene" class="hidden" mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.001; filterBeta: 10;" vr-mode-ui="enabled: false" color-space="sRGB">
         <a-assets>
-            <video id="ar-video" src="./video.mp4" loop playsinline webkit-playsinline></video>
+            <video id="ar-video" src="https://cdn.glitch.global/e5424551-7f2d-4527-b449-131468a18c6c/video.mp4?v=1720431238968" loop playsinline webkit-playsinline></video>
         </a-assets>
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
         <a-entity id="target-entity" mindar-image-target="targetIndex: 0">
-            <!--
-                *** این خط مهمترین تغییر است ***
-                برای اینکه ویدیو کاملاً هم اندازه قاب عکس شما باشد، باید نسبت ابعاد (طول به عرض) آن را اینجا تنظیم کنید.
-                یک خط کش بردارید و طول و عرض عکسی که به عنوان هدف استفاده کرده اید را اندازه بگیرید.
-                سپس ارتفاع را تقسیم بر عرض کنید.
-                مثال: اگر عکس شما 15 سانتی متر ارتفاع و 12 سانتی متر عرض دارد: 15 / 12 = 1.25
-                حالا عدد به دست آمده را در قسمت height="" قرار دهید.
-                width همیشه باید "1" باشد.
-            -->
             <a-video id="ar-video-plane" src="#ar-video" width="1" height="0.8" rotation="0 0 0" position="0 0 0"></a-video>
         </a-entity>
     </a-scene>
