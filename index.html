@@ -115,10 +115,13 @@
     <div id="modal-player" class="hidden"></div>
     
     <!-- 
-        *** مهمترین تغییر برای کاهش لرزش ویدیو ***
-        مقادیر filterMinCF و filterBeta برای افزایش پایداری ردیابی تغییر کرده‌اند.
+        *** تنظیمات پیشرفته برای بهینه‌سازی و کاهش شدید لرزش ***
+        filterMinCF: حساسیت به تشخیص‌های جدید را کم می‌کند (کاهش لرزش).
+        filterBeta: سرعت فیلتر را بسیار کند می‌کند تا حرکات نرم‌تر شوند.
+        missTolerance: تعداد فریم‌هایی که تصویر می‌تواند دیده نشود تا ویدیو متوقف شود را افزایش می‌دهد.
+        warmupTolerance: تعداد فریم‌هایی که تصویر باید دیده شود تا ویدیو شروع شود را افزایش می‌دهد.
     -->
-    <a-scene id="ar-scene" class="hidden" mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.01; filterBeta: 1000;" vr-mode-ui="enabled: false" color-space="sRGB">
+    <a-scene id="ar-scene" class="hidden" mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.1; filterBeta: 10000; missTolerance: 20; warmupTolerance: 10;" vr-mode-ui="enabled: false" color-space="sRGB">
         <a-assets>
             <video id="ar-video" src="./video.mp4" loop playsinline webkit-playsinline></video>
         </a-assets>
