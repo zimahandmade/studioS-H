@@ -26,44 +26,29 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10005;
+            z-index: 3;
         }
         #start-container {
             text-align: center;
             max-width: 90%;
-            transform: translateY(10vh); 
         }
-        
-        @keyframes pulse-effect {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
-            }
-            70% {
-                transform: scale(1.02);
-                box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
-            }
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-            }
-        }
-
         #start-button {
-            padding: 12px 45px;
-            font-size: 18px;
+            padding: 15px 50px;
+            font-size: 20px;
             font-weight: bold;
-            color: black;
-            background-color: transparent;
-            border: 2px solid black;
+            color: white;
+            background: linear-gradient(45deg, #FF4500, #FF8C00);
+            border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
-            animation: pulse-effect 2s infinite;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: glow-pulse 2s infinite;
         }
-        #start-button:hover {
-            background-color: black;
-            color: white;
+        @keyframes glow-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         #ui-container {
             position: fixed;
@@ -113,44 +98,6 @@
             height: 100%;
             z-index: 1;
         }
-        #permission-denied-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
-            z-index: 10006;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            max-width: 80%;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-        .modal-content h3 {
-            margin-top: 0;
-            color: #333;
-        }
-        .modal-content p {
-            color: #666;
-            font-size: 16px;
-        }
-        .modal-close-button {
-            margin-top: 20px;
-            padding: 10px 25px;
-            border: none;
-            background-color: #f44336;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
@@ -161,23 +108,15 @@
         </div>
     </div>
     
-    <div id="permission-denied-modal" class="hidden">
-        <div class="modal-content">
-            <h3>دسترسی لازم است</h3>
-            <p>برای تجربه واقعیت افزوده، نیاز به اجازه دسترسی به سنسورهای حرکتی گوشی شما داریم.</p>
-            <button class="modal-close-button">متوجه شدم</button>
-        </div>
-    </div>
-
     <div id="ui-container" class="hidden">
         <button id="toggle-view-button">پخش تمام صفحه</button>
     </div>
     
     <div id="modal-player" class="hidden"></div>
     
-    <a-scene id="ar-scene" class="hidden" mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.001; filterBeta: 10;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" color-space="sRGB">
+    <a-scene id="ar-scene" class="hidden" mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.001; filterBeta: 10;" vr-mode-ui="enabled: false" color-space="sRGB">
         <a-assets>
-            <video id="ar-video" src="https://cdn.glitch.global/e5424551-7f2d-4527-b449-131468a18c6c/video.mp4?v=1720431238968" preload="auto" loop playsinline webkit-playsinline></video>
+            <video id="ar-video" src="https://cdn.glitch.global/e5424551-7f2d-4527-b449-131468a18c6c/video.mp4?v=1720431238968" loop playsinline webkit-playsinline></video>
         </a-assets>
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
         <a-entity id="target-entity" mindar-image-target="targetIndex: 0">
@@ -195,52 +134,23 @@
             const uiContainer = document.querySelector("#ui-container");
             const toggleViewButton = document.querySelector("#toggle-view-button");
             const modalPlayer = document.querySelector("#modal-player");
-            const permissionDeniedModal = document.querySelector("#permission-denied-modal");
-            const closeModalButton = document.querySelector(".modal-close-button");
 
             let isModalMode = false;
 
-            const startAR = () => {
+            startButton.addEventListener('click', () => {
                 splashScreen.classList.add('hidden');
                 sceneEl.classList.remove('hidden');
                 sceneEl.systems['mindar-image-system'].start();
-            };
-
-            startButton.addEventListener('click', () => {
-                // *** مهمترین تغییر برای حل مشکل پخش نشدن ویدیو ***
-                // با کلیک کاربر، ویدیو را برای یک لحظه پخش و متوقف می‌کنیم.
-                // این کار به مرورگر (مخصوصا آیفون) اجازه می‌دهد که ویدیو را بعداً پخش کند.
                 arVideo.muted = false;
-                arVideo.play();
-                arVideo.pause();
-
-                if (typeof DeviceMotionEvent.requestPermission === 'function') {
-                    DeviceMotionEvent.requestPermission()
-                        .then(permissionState => {
-                            if (permissionState === 'granted') {
-                                startAR();
-                            } else {
-                                permissionDeniedModal.classList.remove('hidden');
-                            }
-                        })
-                        .catch(console.error);
-                } else {
-                    startAR();
-                }
-            });
-
-            closeModalButton.addEventListener('click', () => {
-                permissionDeniedModal.classList.add('hidden');
             });
 
             sceneEl.addEventListener("arReady", () => {
                 targetEntity.addEventListener("targetFound", () => {
+                    arVideo.play();
                     if (!isModalMode) {
                         uiContainer.classList.remove('hidden');
                     }
-                    arVideo.play();
                 });
-
                 targetEntity.addEventListener("targetLost", () => {
                     arVideo.pause();
                     if (!isModalMode) {
