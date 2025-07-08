@@ -177,11 +177,6 @@
     
     <a-scene id="ar-scene" class="hidden" mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.001; filterBeta: 10;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" color-space="sRGB">
         <a-assets>
-            <!-- 
-                ویژگی preload="auto" برای بارگذاری سریع‌تر ویدیو اضافه شد.
-                آدرس ویدیو به یک لینک عمومی تغییر کرد تا از در دسترس بودن آن مطمئن شویم.
-                شما می‌توانید این آدرس را با آدرس ویدیوی خودتان جایگزین کنید.
-            -->
             <video id="ar-video" src="https://cdn.glitch.global/e5424551-7f2d-4527-b449-131468a18c6c/video.mp4?v=1720431238968" preload="auto" loop playsinline webkit-playsinline></video>
         </a-assets>
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -209,10 +204,16 @@
                 splashScreen.classList.add('hidden');
                 sceneEl.classList.remove('hidden');
                 sceneEl.systems['mindar-image-system'].start();
-                arVideo.muted = false;
             };
 
             startButton.addEventListener('click', () => {
+                // *** مهمترین تغییر برای حل مشکل پخش نشدن ویدیو ***
+                // با کلیک کاربر، ویدیو را برای یک لحظه پخش و متوقف می‌کنیم.
+                // این کار به مرورگر (مخصوصا آیفون) اجازه می‌دهد که ویدیو را بعداً پخش کند.
+                arVideo.muted = false;
+                arVideo.play();
+                arVideo.pause();
+
                 if (typeof DeviceMotionEvent.requestPermission === 'function') {
                     DeviceMotionEvent.requestPermission()
                         .then(permissionState => {
@@ -233,22 +234,14 @@
             });
 
             sceneEl.addEventListener("arReady", () => {
-                // منطق پخش ویدیو بهبود یافت تا مطمئن‌تر عمل کند
                 targetEntity.addEventListener("targetFound", () => {
-                    console.log("Target Found! Attempting to play video.");
                     if (!isModalMode) {
                         uiContainer.classList.remove('hidden');
                     }
-                    const playPromise = arVideo.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(error => {
-                            console.error("Video playback failed:", error);
-                        });
-                    }
+                    arVideo.play();
                 });
 
                 targetEntity.addEventListener("targetLost", () => {
-                    console.log("Target Lost. Pausing video.");
                     arVideo.pause();
                     if (!isModalMode) {
                         uiContainer.classList.add('hidden');
